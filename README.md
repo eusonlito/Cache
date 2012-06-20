@@ -5,12 +5,15 @@ This script works as simple interface with APC, Memcache, Memcached and Files to
 
 You will can store different data into different cache methods (some examples into settings-example.php).
 
+Require PSR-0 autoload compilant app
+
 Examples
 --------
 
 #### Files cache
 
-    include ('settings-example.php');
+    include (__DIR__.'/Cache/Cache.php');
+    include (__DIR__.'/settings-example.php');
 
     $Cache = new \Cache\Cache($settings['js']);
 
@@ -28,7 +31,8 @@ Examples
 
 #### Database Query cache (into APC)
 
-    include ('settings-example.php');
+    include (__DIR__.'/Cache/Cache.php');
+    include (__DIR__.'/settings-example.php');
 
     $Cache = new \Cache\Cache($settings['db']);
 
@@ -49,15 +53,15 @@ Examples
 
 #### Configuration cache (into Memcache)
 
-    include ('settings-example.php');
+    include (__DIR__.'/Cache/Cache.php');
+    include (__DIR__.'/settings-example.php');
 
     $Cache = new \Cache\Cache($settings['config']);
 
     $config_files = array(
-        'db.php', 'paths.php', 'events.php', 'routes.php',
-        'templates.php', 'mail.php', 'session.php', 'tables.php',
-        'actions.php', 'css.php', 'languages.php'
-       );
+        'db', 'paths', 'events', 'routes', 'templates', 'mail',
+        'session', 'tables', 'actions', 'css', 'languages'
+    );
 
     $config_key = md5(serialize($config_files));
 
@@ -67,7 +71,9 @@ Examples
         $configuration = array();
 
         foreach ($config_files as $file) {
-            $configuration = array_replace_recursive($configuration, include('config/'.$file));
+            if (is_file(__DIR__.'/config/'.$file.'.php')) {
+                $configuration = array_replace_recursive($configuration, include(__DIR__.'/config/'.$file.'.php'));
+            }
         }
 
         if ($custom_time) {

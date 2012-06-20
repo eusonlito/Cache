@@ -36,6 +36,14 @@ class Cache
         $this->settings = $settings;
     }
 
+    static function autoload ($class) {
+        $file = dirname(__DIR__).'/'.str_replace('\\', '/', $class).'.php';
+
+        if (is_file($file)) {
+            include_once ($file);
+        }
+    }
+
     /**
      * public function __call (array $settings)
      *
@@ -89,4 +97,8 @@ class Cache
 
         return $this->settings[$key];
     }
+}
+
+if (!spl_autoload_functions()) {
+    spl_autoload_register(__NAMESPACE__.'\\Cache::autoload');
 }
