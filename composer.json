@@ -1,5 +1,5 @@
 {
-	"name": "ANS/Cache",
+	"name": "ans/cache",
 	"type": "library",
 	"description": "PHP cache library",
 	"version": "1.0",
