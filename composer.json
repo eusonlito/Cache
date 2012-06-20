@@ -1,0 +1,24 @@
+{
+	"name": "ANS/Cache",
+	"type": "library",
+	"description": "PHP cache library",
+	"version": "1.0",
+	"keywords": ["php", "cache"],
+	"homepage": "https://github.com/eusonlito/Cache/",
+	"license": "AGPL-3.0",
+	"authors": [
+		{
+			"name": "A Navalla Suíza",
+			"email": "equipo@anavallasuiza.com",
+			"homepage": "http://anavallasuiza.com",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"email": "equipo@anavallasuiza.com",
+		"issues": "https://github.com/eusonlito/Cache/issues"
+	},
+	"require": {
+		"php": ">=5.3.3"
+	}
+}
