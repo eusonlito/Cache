@@ -1,8 +1,6 @@
 <?php
 namespace Cache\Interfaces;
 
-defined('ANS') or die();
-
 if (!function_exists('apc_exists')) {
     function apc_exists ($key)
     {
@@ -65,11 +63,9 @@ class Apc implements \Cache\Icache
     *
     * return mixed
     */
-    public function set ($key, $value, $expire = 3600)
+    public function set ($key, $value, $expire = 0)
     {
-        $expire = is_integer($expire) ? $expire : $this->settings['expire'];
-
-        apc_store($key, base64_encode(gzdeflate(serialize($value))), $expire);
+        apc_store($key, base64_encode(gzdeflate(serialize($value))), ($expire ?: $this->settings['expire']));
 
         return $value;
     }

@@ -102,18 +102,16 @@ class Files implements \Cache\Icache
     *
     * return mixed
     */
-    public function set ($key, $value, $expire = 3600)
+    public function set ($key, $value, $expire = 0)
     {
         $file = $this->fileName($key);
-
-        $expire = is_integer($expire) ? $expire : $this->settings['expire'];
 
         if (!is_file($file) || is_writable($file)) {
             file_put_contents($file, $this->settings['compress'] ? gzdeflate(serialize($value)) : serialize($value));
 
             chmod($file, 0600);
 
-            touch($file, time() + $expire);
+            touch($file, time() + ($expire ?: $this->settings['expire']));
         }
 
         return $value;

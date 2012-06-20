@@ -79,11 +79,9 @@ class Memcache implements \Cache\Icache
     *
     * return mixed
     */
-    public function set ($key, $value, $expire = 3600)
+    public function set ($key, $value, $expire = 0)
     {
-        $expire = is_integer($expire) ? $expire : $this->settings['expire'];
-
-        $this->server->set($key, $value, MEMCACHE_COMPRESSED, $expire);
+        $this->server->set($key, $value, MEMCACHE_COMPRESSED, ($expire ?: $this->settings['expire']));
 
         return $value;
     }
