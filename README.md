@@ -5,8 +5,6 @@ This script works as simple interface with APC, Memcache, Memcached and Files to
 
 You will can store different data into different cache methods (some examples into settings-example.php).
 
-Require PSR-0 autoload compilant app
-
 Examples
 --------
 
