@@ -44,7 +44,7 @@ Examples
     if ($Cache->exists($cache_key)) {
         $rows = $Cache->get($cache_key);
     } else {
-        $rows = mysql_fetch_assoc(mysql_query($cache_key));
+        $rows = mysql_fetch_assoc(mysql_query($query));
 
         if ($custom_time) {
             $Cache->set($cache_key, $rows, $custom_time);
