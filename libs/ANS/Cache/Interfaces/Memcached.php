@@ -1,7 +1,7 @@
 <?php
-namespace Cache\Interfaces;
+namespace ANS\Cache\Interfaces;
 
-class Memcached implements \Cache\Icache
+class Memcached implements \ANS\Cache\Icache
 {
     public $loaded = false;
 

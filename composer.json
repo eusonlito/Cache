@@ -21,9 +21,12 @@
     "require": {
         "php": ">=5.3.3"
     },
+    "config": {
+        "vendor-dir": "libs"
+    },
     "autoload": {
         "psr-0": {
-            "Cache": ""
+            "ANS\\Cache": "libs"
         }
     }
 }

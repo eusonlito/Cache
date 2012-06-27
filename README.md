@@ -11,10 +11,10 @@ Examples
 #### Files cache
 
     <?php
-    include (__DIR__.'/Cache/Cache.php');
+    include (__DIR__.'/libs/ANS/Cache/Cache.php');
     include (__DIR__.'/settings-example.php');
 
-    $Cache = new \Cache\Cache($settings['js']);
+    $Cache = new \ANS\Cache\Cache($settings['js']);
 
     if ($Cache->exists('js-files')) {
         $content = $Cache->get('js-files');
@@ -33,10 +33,10 @@ Examples
 #### Database Query cache (into APC)
 
     <?php
-    include (__DIR__.'/Cache/Cache.php');
+    include (__DIR__.'/libs/ANS/Cache/Cache.php');
     include (__DIR__.'/settings-example.php');
 
-    $Cache = new \Cache\Cache($settings['db']);
+    $Cache = new \ANS\Cache\Cache($settings['db']);
 
     $query = 'SELECT * FROM Users;';
     $cache_key = md5($query);
@@ -56,10 +56,10 @@ Examples
 #### Configuration cache (into Memcache)
 
     <?php
-    include (__DIR__.'/Cache/Cache.php');
+    include (__DIR__.'/libs/ANS/Cache/Cache.php');
     include (__DIR__.'/settings-example.php');
 
-    $Cache = new \Cache\Cache($settings['config']);
+    $Cache = new \ANS\Cache\Cache($settings['config']);
 
     $config_files = array(
         'db', 'paths', 'events', 'routes', 'templates', 'mail',

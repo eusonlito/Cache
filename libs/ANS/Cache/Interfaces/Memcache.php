@@ -1,18 +1,12 @@
 <?php
-namespace Cache\Interfaces;
+namespace ANS\Cache\Interfaces;
 
-if (!function_exists('apc_exists')) {
-    function apc_exists ($key)
-    {
-        return apc_fetch($key) ? true : false;
-    }
-}
-
-class Apc implements \Cache\Icache
+class Memcache implements \ANS\Cache\Icache
 {
     public $loaded = false;
 
     private $settings = array();
+    private $server;
 
     /**
      * public function __construct ([array $settings])
@@ -21,9 +15,25 @@ class Apc implements \Cache\Icache
      */
     public function __construct ($settings = array())
     {
-        if (!extension_loaded('apc')) {
+        if (!extension_loaded('memcache')) {
             if ($settings['exception']) {
-                throw new \UnexpectedValueException('PHP-APC extension is not loaded');
+                throw new \UnexpectedValueException('PHP-Memcache extension is not loaded');
+            } else {
+                return false;
+            }
+        }
+
+        $this->server = new \Memcache;
+
+        if ($settings['host'] && $settings['port']) {
+            $connected = $this->server->connect($settings['host'], $settings['port']);
+        } else {
+            $connected = $this->server->connect('localhost', 11211);
+        }
+
+        if (!$connected) {
+            if ($settings['exception']) {
+                throw new \UnexpectedValueException('Can not connect to Memcache server');
             } else {
                 return false;
             }
@@ -53,7 +63,13 @@ class Apc implements \Cache\Icache
     */
     public function exists ($key)
     {
-        return apc_exists($key);
+        if ($this->server->add($key, null)) {
+            $this->server->delete($key);
+
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -65,7 +81,7 @@ class Apc implements \Cache\Icache
     */
     public function set ($key, $value, $expire = 0)
     {
-        apc_store($key, base64_encode(gzdeflate(serialize($value))), ($expire ?: $this->settings['expire']));
+        $this->server->set($key, $value, MEMCACHE_COMPRESSED, ($expire ?: $this->settings['expire']));
 
         return $value;
     }
@@ -79,15 +95,7 @@ class Apc implements \Cache\Icache
     */
     public function get ($key)
     {
-        $value = apc_fetch($key);
-
-        if (!$value) {
-            return '';
-        }
-
-        $value = @gzinflate(base64_decode($value));
-
-        return $value ? unserialize($value) : '';
+        return $this->server->get($key, MEMCACHE_COMPRESSED);
     }
 
     /**
@@ -95,11 +103,11 @@ class Apc implements \Cache\Icache
     *
     * Delete a variable from memory
     *
-    * return boolean
+    * return mixed
     */
     public function delete ($key)
     {
-        return apc_delete($key);
+        return $this->server->delete($key);
     }
 
     /**
@@ -111,11 +119,7 @@ class Apc implements \Cache\Icache
     */
     public function clear ()
     {
-        apc_clear_cache();
-        apc_clear_cache('user');
-        apc_clear_cache('opcode');
-
-        return true;
+        return $this->server->flush();
     }
 
     /**
@@ -127,24 +131,6 @@ class Apc implements \Cache\Icache
     */
     public function expire ($key)
     {
-        $info = apc_cache_info('user');
-
-        if (!$info['cache_list']) {
-            return false;
-        }
-
-        foreach ($info['cache_list'] as $entry) {
-            if ($entry['info'] !== $key) {
-                continue;
-            }
-
-            if ($entry['ttl'] == 0) {
-                return 0;
-            }
-
-            return $entry['creation_time'] + $entry['ttl'];
-        }
-
         return false;
     }
 }

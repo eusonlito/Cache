@@ -1,8 +1,10 @@
 <?php
-include (__DIR__.'/Cache/Cache.php');
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+
+include (__DIR__.'/libs/ANS/Cache/Cache.php');
 include (__DIR__.'/settings-example.php');
 
-$Cache = new \Cache\Cache($settings['js']);
+$Cache = new \ANS\Cache\Cache($settings['js']);
 
 if ($Cache->exists('js-files')) {
     $content = $Cache->get('js-files');

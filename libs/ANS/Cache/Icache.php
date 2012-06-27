@@ -1,5 +1,5 @@
 <?php
-namespace Cache;
+namespace ANS\Cache;
 
 interface Icache {
     public function exists ($key);

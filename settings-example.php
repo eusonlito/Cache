@@ -19,7 +19,7 @@ $settings = array(
     'css' => array(
         'interface' => 'files',
         'expire' => 3600 * 24 * 30,
-        'folder' => (__DIR__.'/cache/'),
+        'folder' => (__DIR__.'/cache/css/'),
         'compress' => true
     ),
     'images' => array(
@@ -29,7 +29,7 @@ $settings = array(
     'js' => array(
         'interface' => 'files',
         'expire' => 3600 * 24 * 30,
-        'folder' => (__DIR__.'/cache/'),
+        'folder' => (__DIR__.'/cache/js/'),
         'compress' => true
     )
 );

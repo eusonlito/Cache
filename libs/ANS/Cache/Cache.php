@@ -1,5 +1,5 @@
 <?php
-namespace Cache;
+namespace ANS\Cache;
 
 class Cache
 {
@@ -21,7 +21,7 @@ class Cache
             }
         }
 
-        $class = '\\Cache\\Interfaces\\'.ucfirst($settings['interface']);
+        $class = '\\ANS\\Cache\\Interfaces\\'.ucfirst($settings['interface']);
 
         try {
             $this->Interface = new $class($settings);
@@ -37,7 +37,7 @@ class Cache
     }
 
     static function autoload ($class) {
-        $file = dirname(__DIR__).'/'.str_replace('\\', '/', $class).'.php';
+        $file = __DIR__.'/'.(str_replace(array(__NAMESPACE__, '\\'), array('', '/'), $class)).'.php';
 
         if (is_file($file)) {
             include_once ($file);
