@@ -6,6 +6,7 @@ class Files implements \ANS\Cache\Icache
     public $loaded = false;
 
     private $settings = array();
+    private $reload = false;
     private $folder;
 
     /**
@@ -77,8 +78,15 @@ class Files implements \ANS\Cache\Icache
 
         $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
         $ext = strstr($ext, 'php') ? 'txt' : $ext;
+        $ext = $ext ? ('.'.$ext) : '';
 
-        return $this->folder.md5($file.serialize($flags)).($ext ? ('.'.$ext) : '');
+        $file = md5($file.serialize($flags));
+
+        if ($this->settings['chunk']) {
+            $file = chunk_split($file, $this->settings['chunk'], '/').$file;
+        }
+
+        return $this->folder.$file.$ext;
     }
 
     /**
@@ -90,6 +98,10 @@ class Files implements \ANS\Cache\Icache
     */
     public function exists ($key)
     {
+        if ($this->reload) {
+            return false;
+        }
+
         $file = $this->fileName($key);
 
         return (is_file($file) && (filemtime($file) > time())) ? true : false;
@@ -105,6 +117,11 @@ class Files implements \ANS\Cache\Icache
     public function set ($key, $value, $expire = 0)
     {
         $file = $this->fileName($key);
+        $dir = dirname($file);
+
+        if ($this->settings['chunk'] && !is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
 
         if (!is_file($file) || is_writable($file)) {
             file_put_contents($file, $this->settings['compress'] ? gzdeflate(serialize($value)) : serialize($value));
@@ -171,5 +188,17 @@ class Files implements \ANS\Cache\Icache
     public function expire ($key)
     {
         return false;
+    }
+
+    /**
+    * public function reload (void)
+    *
+    * Allow to skip a cache read and store it again
+    *
+    * return mixed
+    */
+    public function reload ()
+    {
+        $this->reload = true;
     }
 }

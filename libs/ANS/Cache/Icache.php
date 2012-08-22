@@ -8,4 +8,5 @@ interface Icache {
     public function delete ($key);
     public function clear ();
     public function expire ($key);
+    public function reload ();
 }

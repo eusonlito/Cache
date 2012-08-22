@@ -3,7 +3,9 @@ $settings = array(
     'api' => array(
         'interface' => 'files',
         'expire' => 360,
-        'compress' => true
+        'compress' => true,
+        'folder' => (__DIR__.'/cache/api/'),
+        'chunk' => 4 // Allow to create a folder tree like 7351/1c98/97ff/b5dc/e916/74d3/79df/b6e3/73511c9897ffb5dce91674d379dfb6e3 instead a file with name 73511c9897ffb5dce91674d379dfb6e3
     ),
     'config' => array(
         'interface' => 'memcache',

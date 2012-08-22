@@ -13,6 +13,7 @@ class Apc implements \ANS\Cache\Icache
     public $loaded = false;
 
     private $settings = array();
+    private $reload = false;
 
     /**
      * public function __construct ([array $settings])
@@ -53,6 +54,10 @@ class Apc implements \ANS\Cache\Icache
     */
     public function exists ($key)
     {
+        if ($this->reload) {
+            return false;
+        }
+
         return apc_exists($key);
     }
 
@@ -146,5 +151,17 @@ class Apc implements \ANS\Cache\Icache
         }
 
         return false;
+    }
+
+    /**
+    * public function reload (void)
+    *
+    * Allow to skip a cache read and store it again
+    *
+    * return mixed
+    */
+    public function reload ()
+    {
+        $this->reload = true;
     }
 }

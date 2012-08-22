@@ -6,6 +6,7 @@ class Memcache implements \ANS\Cache\Icache
     public $loaded = false;
 
     private $settings = array();
+    private $reload = false;
     private $server;
 
     /**
@@ -63,6 +64,10 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function exists ($key)
     {
+        if ($this->reload) {
+            return false;
+        }
+
         if ($this->server->add($key, null)) {
             $this->server->delete($key);
 
@@ -132,5 +137,17 @@ class Memcache implements \ANS\Cache\Icache
     public function expire ($key)
     {
         return false;
+    }
+
+    /**
+    * public function reload (void)
+    *
+    * Allow to skip a cache read and store it again
+    *
+    * return mixed
+    */
+    public function reload ()
+    {
+        $this->reload = true;
     }
 }

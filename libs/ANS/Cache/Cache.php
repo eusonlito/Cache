@@ -4,39 +4,22 @@ namespace ANS\Cache;
 class Cache
 {
     private $settings = array();
-    private $Interface = object;
+    private $Interface;
 
     /**
      * public function __construct (array $settings)
      *
      * return none
      */
-    public function __construct ($settings)
+    public function __construct ($settings = array())
     {
-        if (!$settings['interface']) {
-            if ($settings['exception']) {
-                throw new \InvalidArgumentException('You must define some cache interface (apc, memcache, memcached, files)');
-            } else {
-                return false;
-            }
+        if ($settings) {
+            $this->setSettings($settings);
         }
-
-        $class = '\\ANS\\Cache\\Interfaces\\'.ucfirst($settings['interface']);
-
-        try {
-            $this->Interface = new $class($settings);
-        } catch (\UnexpectedValueException $e) {
-            if ($settings['exception']) {
-                throw new \UnexpectedValueException(sprintf('Defined cache interface can\'t be loaded: %s', $e->getMessage()));
-            } else {
-                return false;
-            }
-        }
-
-        $this->settings = $settings;
     }
 
-    static function autoload ($class) {
+    static function autoload ($class)
+    {
         $file = __DIR__.'/'.(str_replace(array(__NAMESPACE__, '\\'), array('', '/'), $class)).'.php';
 
         if (is_file($file)) {
@@ -75,11 +58,31 @@ class Cache
     */
     public function setSettings ($settings)
     {
-        if (!$this->Interface->loaded) {
-            return false;
+        $settings = array_merge($this->settings, $settings);
+
+        if (!isset($this->settings['interface']) || ($settings['interface'] !== $this->settings['interface'])) {
+            if (!$settings['interface']) {
+                if ($settings['exception']) {
+                    throw new \InvalidArgumentException('You must define some cache interface (apc, memcache, memcached, files)');
+                } else {
+                    return false;
+                }
+            }
+
+            $class = '\\ANS\\Cache\\Interfaces\\'.ucfirst($settings['interface']);
+
+            try {
+                $this->Interface = new $class($settings);
+            } catch (\UnexpectedValueException $e) {
+                if ($settings['exception']) {
+                    throw new \UnexpectedValueException(sprintf('Defined cache interface can\'t be loaded: %s', $e->getMessage()));
+                } else {
+                    return false;
+                }
+            }
         }
 
-        $this->settings = array_merge($this->settings, $settings);
+        $this->settings = $settings;
 
         $this->Interface->setSettings($settings);
     }
