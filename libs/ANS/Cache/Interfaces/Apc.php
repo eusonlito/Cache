@@ -12,8 +12,12 @@ class Apc implements \ANS\Cache\Icache
 {
     public $loaded = false;
 
-    private $settings = array();
     private $reload = false;
+
+    private $settings = array(
+        'exception' => false,
+        'expire' => 2592000
+    );
 
     /**
      * public function __construct ([array $settings])

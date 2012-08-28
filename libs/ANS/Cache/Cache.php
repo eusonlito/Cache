@@ -3,8 +3,12 @@ namespace ANS\Cache;
 
 class Cache
 {
-    private $settings = array();
     private $Interface;
+
+    private $settings = array(
+        'interface' => '',
+        'exception' => false
+    );
 
     /**
      * public function __construct (array $settings)

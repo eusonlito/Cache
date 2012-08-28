@@ -5,9 +5,16 @@ class Files implements \ANS\Cache\Icache
 {
     public $loaded = false;
 
-    private $settings = array();
-    private $reload = false;
     private $folder;
+    private $reload = false;
+
+    private $settings = array(
+        'folder' => '',
+        'exception' => false,
+        'chunk' => 0,
+        'compress' => true,
+        'expire' => 2592000
+    );
 
     /**
      * public function __construct (array $settings)

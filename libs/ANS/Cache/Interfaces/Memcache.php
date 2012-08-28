@@ -5,9 +5,15 @@ class Memcache implements \ANS\Cache\Icache
 {
     public $loaded = false;
 
-    private $settings = array();
-    private $reload = false;
     private $server;
+    private $reload = false;
+
+    private $settings = array(
+        'exception' => false,
+        'expire' => 2592000,
+        'host' => 'localhost',
+        'port' => 11211
+    );
 
     /**
      * public function __construct ([array $settings])
