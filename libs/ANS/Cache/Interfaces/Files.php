@@ -194,7 +194,9 @@ class Files implements \ANS\Cache\Icache
     */
     public function expire ($key)
     {
-        return false;
+        $file = $this->fileName($key);
+
+        return is_file($file) ? filemtime($file) : null;
     }
 
     /**
