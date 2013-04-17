@@ -13,11 +13,10 @@ if ($Cache->exists('js-files')) {
     $content .= file_get_contents('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js');
     $content .= file_get_contents('http://modernizr.com/i/js/modernizr.com-custom-1.6.js');
 
-    if ($custom_time) {
-        $Cache->set('js-files', $content, $custom_time);
-    } else {
-        $Cache->set('js-files', $content);
-    }
+    // Cache expired time is loaded from settings
+    // but you can set your own time in seconds from now
+    // Third parameter is optional
+    $Cache->set('js-files', $content, $custom_time);
 }
 
 echo $content;

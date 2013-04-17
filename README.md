@@ -23,11 +23,10 @@ Examples
         $content .= file_get_contents('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js');
         $content .= file_get_contents('http://modernizr.com/i/js/modernizr.com-custom-1.6.js');
 
-        if ($custom_time) {
-            $Cache->set('js-files', $content, $custom_time);
-        } else {
-            $Cache->set('js-files', $content);
-        }
+        // Cache expired time is loaded from settings
+        // but you can set your own time in seconds from now
+        // Third parameter is optional
+        $Cache->set('js-files', $content, $custom_time);
     }
 
 #### Database Query cache (into APC)
@@ -46,11 +45,10 @@ Examples
     } else {
         $rows = mysql_fetch_assoc(mysql_query($query));
 
-        if ($custom_time) {
-            $Cache->set($cache_key, $rows, $custom_time);
-        } else {
-            $Cache->set($cache_key, $rows);
-        }
+        // Cache expired time is loaded from settings
+        // but you can set your own time in seconds from now
+        // Third parameter is optional
+        $Cache->set($cache_key, $rows, $custom_time);
     }
 
 #### Configuration cache (into Memcache)
@@ -79,9 +77,8 @@ Examples
             }
         }
 
-        if ($custom_time) {
-            $Cache->set($cache_key, $configuration, $custom_time);
-        } else {
-            $Cache->set($cache_key, $configuration);
-        }
+        // Cache expired time is loaded from settings
+        // but you can set your own time in seconds from now
+        // Third parameter is optional
+        $Cache->set($cache_key, $configuration, $custom_time);
     }
