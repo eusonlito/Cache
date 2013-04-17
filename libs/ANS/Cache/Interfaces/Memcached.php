@@ -38,7 +38,7 @@ class Memcached implements \ANS\Cache\Icache
             $connected = $this->server->addServer('localhost', 11211);
         }
 
-        if (!$connected) {
+        if (empty($connected)) {
             if ($settings['exception']) {
                 throw new \UnexpectedValueException('Can not connect to Memcached server');
             } else {
@@ -50,7 +50,7 @@ class Memcached implements \ANS\Cache\Icache
 
         $this->loaded = true;
 
-        $this->setSettings($settings);
+        return $this->setSettings($settings);
     }
 
     /**
@@ -60,7 +60,7 @@ class Memcached implements \ANS\Cache\Icache
     */
     public function setSettings (array $settings)
     {
-        $this->settings = array_merge($this->settings, $settings);
+        return $this->settings = array_merge($this->settings, $settings);
     }
 
     /**
@@ -72,7 +72,7 @@ class Memcached implements \ANS\Cache\Icache
     */
     public function exists ($key)
     {
-        if ($this->reload) {
+        if (empty($this->loaded) || $this->reload) {
             return false;
         }
 
@@ -94,6 +94,10 @@ class Memcached implements \ANS\Cache\Icache
     */
     public function set ($key, $value, $expire = 0)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         $this->server->set($key, $value, ($expire ?: $this->settings['expire']));
 
         return $value;
@@ -108,6 +112,10 @@ class Memcached implements \ANS\Cache\Icache
     */
     public function get ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         return $this->server->get($key);
     }
 
@@ -120,6 +128,10 @@ class Memcached implements \ANS\Cache\Icache
     */
     public function delete ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         return $this->server->delete($key);
     }
 
@@ -132,6 +144,10 @@ class Memcached implements \ANS\Cache\Icache
     */
     public function clear ()
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         return $this->server->flush();
     }
 

@@ -38,7 +38,7 @@ class Memcache implements \ANS\Cache\Icache
             $connected = $this->server->connect('localhost', 11211);
         }
 
-        if (!$connected) {
+        if (empty($connected)) {
             if ($settings['exception']) {
                 throw new \UnexpectedValueException('Can not connect to Memcache server');
             } else {
@@ -48,7 +48,7 @@ class Memcache implements \ANS\Cache\Icache
 
         $this->loaded = true;
 
-        $this->setSettings($settings);
+        return $this->setSettings($settings);
     }
 
     /**
@@ -58,7 +58,7 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function setSettings (array $settings)
     {
-        $this->settings = array_merge($this->settings, $settings);
+        return $this->settings = array_merge($this->settings, $settings);
     }
 
     /**
@@ -70,7 +70,7 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function exists ($key)
     {
-        if ($this->reload) {
+        if (empty($this->loaded) || $this->reload) {
             return false;
         }
 
@@ -92,6 +92,10 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function set ($key, $value, $expire = 0)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         $this->server->set($key, $value, MEMCACHE_COMPRESSED, ($expire ?: $this->settings['expire']));
 
         return $value;
@@ -106,6 +110,10 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function get ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         return $this->server->get($key, MEMCACHE_COMPRESSED);
     }
 
@@ -118,6 +126,10 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function delete ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         return $this->server->delete($key);
     }
 
@@ -130,6 +142,10 @@ class Memcache implements \ANS\Cache\Icache
     */
     public function clear ()
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         return $this->server->flush();
     }
 

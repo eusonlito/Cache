@@ -40,11 +40,11 @@ class Cache
      */
     public function __call ($method, $arguments)
     {
-        if (!$this->Interface->loaded) {
+        if ($this->loaded() !== true) {
             return false;
         }
 
-        if (!method_exists($this->Interface, $method)) {
+        if (method_exists($this->Interface, $method) !== true) {
             if ($settings['exception']) {
                 throw new \BadFunctionCallException(sprintf('Method %s doesn\'t exists in Cache Interface', $method));
             } else {
@@ -56,6 +56,18 @@ class Cache
     }
 
     /**
+    * public function loaded (void)
+    *
+    * returns if cache could be loaded
+    *
+    * return boolean
+    */
+    public function loaded ()
+    {
+        return $this->Interface->loaded;
+    }
+
+    /**
     * public function setSettings (array $settings)
     *
     * Set the execution settings
@@ -64,31 +76,37 @@ class Cache
     {
         $settings = array_merge($this->settings, $settings);
 
-        if (!isset($this->settings['interface']) || ($settings['interface'] !== $this->settings['interface'])) {
-            if (!$settings['interface']) {
-                if ($settings['exception']) {
-                    throw new \InvalidArgumentException('You must define some cache interface (apc, memcache, memcached, files)');
-                } else {
-                    return false;
-                }
-            }
+        if ($this->settings['interface'] && ($settings['interface'] === $this->settings['interface'])) {
+            $response = $this->Interface->setSettings($settings);
 
-            $class = '\\ANS\\Cache\\Interfaces\\'.ucfirst($settings['interface']);
-
-            try {
-                $this->Interface = new $class($settings);
-            } catch (\UnexpectedValueException $e) {
-                if ($settings['exception']) {
-                    throw new \UnexpectedValueException(sprintf('Defined cache interface can\'t be loaded: %s', $e->getMessage()));
-                } else {
-                    return false;
-                }
+            if ($response) {
+                return $this->settings = $settings;
+            } else {
+                return $response;
             }
         }
 
-        $this->settings = $settings;
+        if (empty($settings['interface'])) {
+            if ($settings['exception']) {
+                throw new \InvalidArgumentException('You must define some cache interface (apc, memcache, memcached, files)');
+            } else {
+                return false;
+            }
+        }
 
-        $this->Interface->setSettings($settings);
+        $class = '\\ANS\\Cache\\Interfaces\\'.ucfirst($settings['interface']);
+
+        try {
+            $this->Interface = new $class($settings);
+        } catch (\UnexpectedValueException $e) {
+            if ($settings['exception']) {
+                throw new \UnexpectedValueException(sprintf('Defined cache interface can\'t be loaded: %s', $e->getMessage()));
+            } else {
+                return false;
+            }
+        }
+
+        return $this->settings = $settings;
     }
 
     /**
@@ -98,10 +116,6 @@ class Cache
     */
     public function getSettings ($key)
     {
-        if (!$this->Interface->loaded) {
-            return false;
-        }
-
         return $this->settings[$key];
     }
 }

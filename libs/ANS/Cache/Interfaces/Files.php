@@ -25,7 +25,7 @@ class Files implements \ANS\Cache\Icache
     {
         $this->folder = $settings['folder'];
 
-        if (!$this->folder) {
+        if (empty($this->folder)) {
             if ($settings['exception']) {
                 throw new \InvalidArgumentException('You must define base folder to store cache files');
             } else {
@@ -57,7 +57,7 @@ class Files implements \ANS\Cache\Icache
 
         $this->loaded = true;
 
-        $this->setSettings($settings);
+        return $this->setSettings($settings);
     }
 
     /**
@@ -67,7 +67,7 @@ class Files implements \ANS\Cache\Icache
     */
     public function setSettings (array $settings)
     {
-        $this->settings = array_merge($this->settings, $settings);
+        return $this->settings = array_merge($this->settings, $settings);
     }
 
     /**
@@ -105,7 +105,7 @@ class Files implements \ANS\Cache\Icache
     */
     public function exists ($key)
     {
-        if ($this->reload) {
+        if (empty($this->loaded) || $this->reload) {
             return false;
         }
 
@@ -123,6 +123,10 @@ class Files implements \ANS\Cache\Icache
     */
     public function set ($key, $value, $expire = 0)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         $file = $this->fileName($key);
         $dir = dirname($file);
 
@@ -150,6 +154,10 @@ class Files implements \ANS\Cache\Icache
     */
     public function get ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         $file = $this->fileName($key);
 
         if (!is_file($file) || (filemtime($file) < time())) {
@@ -168,6 +176,10 @@ class Files implements \ANS\Cache\Icache
     */
     public function delete ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         $file = $this->fileName($key);
 
         return is_file($file) ? unlink($file) : null;
@@ -194,6 +206,10 @@ class Files implements \ANS\Cache\Icache
     */
     public function expire ($key)
     {
+        if (empty($this->loaded)) {
+            return false;
+        }
+
         $file = $this->fileName($key);
 
         return is_file($file) ? filemtime($file) : null;
