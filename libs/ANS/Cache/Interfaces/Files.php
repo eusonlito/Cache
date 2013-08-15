@@ -36,17 +36,15 @@ class Files implements \ANS\Cache\Icache
         $this->folder = preg_replace('#[/\\\]+#', '/', $this->folder.'/');
 
         if (!is_dir($this->folder)) {
-            $base = dirname($this->folder);
+            $created = @mkdir($this->folder, 0700, true);
 
-            if (!is_writable($base)) {
+            if ($created !== true) {
                 if ($settings['exception']) {
-                    throw new \UnexpectedValueException('Defined cache folder not exists and can not be created');
+                    throw new \UnexpectedValueException('Defined cache folder can not be created');
                 } else {
                     return false;
                 }
             }
-
-            mkdir($this->folder, 0700);
         } else if (!is_writable($this->folder)) {
             if ($settings['exception']) {
                 throw new \UnexpectedValueException('Defined cache folder is not writable');
